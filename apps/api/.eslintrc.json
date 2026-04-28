@@ -1,0 +1,25 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["**/apps/web/**", "**/apps/ai-service/**"],
+            "message": "Backend must not import from other apps. The API communicates with ai-service over HTTP only."
+          }
+        ]
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/explicit-function-return-type": "off"
+  },
+  "env": {
+    "node": true,
+    "es2022": true
+  }
+}

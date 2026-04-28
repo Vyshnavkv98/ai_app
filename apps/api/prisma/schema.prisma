@@ -1,0 +1,276 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships WorkspaceMember[]
+  auditLogs   AuditLog[]
+}
+
+model Workspace {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  plan      Plan     @default(FREE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members      WorkspaceMember[]
+  agents       Agent[]
+  chatSessions ChatSession[]
+  integrations Integration[]
+  files        File[]
+  workflows    Workflow[]
+  usageLogs    UsageLog[]
+  auditLogs    AuditLog[]
+}
+
+model WorkspaceMember {
+  id          String   @id @default(cuid())
+  role        Role     @default(MEMBER)
+  userId      String
+  workspaceId String
+  joinedAt    DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, workspaceId])
+  @@index([workspaceId])
+}
+
+model Agent {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  systemPrompt  String   @db.Text
+  model         String   @default("gpt-4o")
+  tools         Json     @default("[]")
+  memoryEnabled Boolean  @default(true)
+  ragEnabled    Boolean  @default(false)
+  maxTokens     Int      @default(4096)
+  temperature   Float    @default(0.7)
+  outputSchema  Json?
+  isPublic      Boolean  @default(false)
+  isDraft       Boolean  @default(false)
+  workspaceId   String
+  createdById   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  chatSessions ChatSession[]
+  workflows    Workflow[]
+  usageLogs    UsageLog[]
+
+  @@index([workspaceId, createdAt])
+}
+
+model ChatSession {
+  id          String   @id @default(cuid())
+  title       String?
+  workspaceId String
+  agentId     String?
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  agent     Agent?    @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  messages  Message[]
+
+  @@index([workspaceId, createdAt])
+}
+
+model Message {
+  id          String      @id @default(cuid())
+  role        MessageRole
+  content     String      @db.Text
+  toolCalls   Json?
+  toolResults Json?
+  tokenCount  Int?
+  cost        Float?
+  sessionId   String
+  createdAt   DateTime    @default(now())
+
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, createdAt])
+}
+
+model Integration {
+  id             String            @id @default(cuid())
+  type           IntegrationType
+  status         IntegrationStatus @default(CONNECTED)
+  config         Json              @default("{}")
+  encryptedCreds String            @db.Text
+  workspaceId    String
+  createdById    String
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+}
+
+model File {
+  id           String      @id @default(cuid())
+  name         String
+  mimeType     String
+  sizeBytes    Int
+  s3Key        String      @unique
+  indexStatus  IndexStatus @default(PENDING)
+  chunkCount   Int?
+  workspaceId  String
+  uploadedById String
+  createdAt    DateTime    @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt])
+}
+
+model Workflow {
+  id            String          @id @default(cuid())
+  name          String
+  description   String?
+  trigger       WorkflowTrigger
+  triggerConfig Json            @default("{}")
+  steps         Json            @default("[]")
+  webhookSecret String?
+  agentId       String?
+  isActive      Boolean         @default(true)
+  workspaceId   String
+  createdById   String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  workspace  Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  agent      Agent?              @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  executions WorkflowExecution[]
+
+  @@index([workspaceId])
+}
+
+model WorkflowExecution {
+  id          String          @id @default(cuid())
+  status      ExecutionStatus @default(RUNNING)
+  input       Json?
+  output      Json?
+  error       String?
+  startedAt   DateTime        @default(now())
+  completedAt DateTime?
+  workflowId  String
+
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@index([workflowId, startedAt])
+}
+
+model UsageLog {
+  id               String   @id @default(cuid())
+  model            String
+  promptTokens     Int
+  completionTokens Int
+  totalTokens      Int
+  costUsd          Float
+  workspaceId      String
+  agentId          String?
+  userId           String?
+  createdAt        DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  agent     Agent?    @relation(fields: [agentId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt])
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  action       String
+  resourceType String
+  resourceId   String
+  metadata     Json?
+  ipAddress    String?
+  userId       String
+  workspaceId  String
+  createdAt    DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt])
+}
+
+enum Plan {
+  FREE
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum MessageRole {
+  user
+  assistant
+  system
+  tool
+}
+
+enum IntegrationType {
+  SLACK
+  GMAIL
+  NOTION
+  HUBSPOT
+  POSTGRES
+  WEBHOOK
+  MCP
+}
+
+enum IntegrationStatus {
+  CONNECTED
+  DISCONNECTED
+  ERROR
+}
+
+enum IndexStatus {
+  PENDING
+  INDEXING
+  INDEXED
+  FAILED
+}
+
+enum WorkflowTrigger {
+  MANUAL
+  SCHEDULE
+  WEBHOOK
+  SLACK_MESSAGE
+  EMAIL_RECEIVED
+}
+
+enum ExecutionStatus {
+  RUNNING
+  SUCCESS
+  FAILED
+  CANCELLED
+}

@@ -1,0 +1,27 @@
+FROM node:20-alpine AS base
+
+RUN npm install -g pnpm@9.0.0
+
+WORKDIR /app
+
+# Copy workspace config
+COPY package.json pnpm-workspace.yaml turbo.json ./
+COPY packages/shared/package.json ./packages/shared/
+COPY apps/api/package.json ./apps/api/
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source
+COPY packages/shared ./packages/shared
+COPY apps/api ./apps/api
+
+# Generate Prisma client
+RUN pnpm --filter api db:generate
+
+# Build
+RUN pnpm --filter api build
+
+EXPOSE 4000
+
+CMD ["pnpm", "--filter", "api", "start"]

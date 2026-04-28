@@ -1,0 +1,16 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["**/apps/api/**", "**/apps/ai-service/**"],
+            "message": "Frontend must not import from backend apps. Use apps/web/src/lib/api-client.ts to communicate with the API over HTTP."
+          }
+        ]
+      }
+    ]
+  }
+}
