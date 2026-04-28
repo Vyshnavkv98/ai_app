@@ -62,7 +62,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=ai_copilot
+      - POSTGRES_DB=nexus_ai
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

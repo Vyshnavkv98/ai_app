@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     # Pinecone
     pinecone_api_key: str = ""
     pinecone_environment: str = ""
-    pinecone_index_name: str = "ai-copilot"
+    pinecone_index_name: str = "nexus-ai"
 
     # Redis
     redis_url: str = "redis://localhost:6379"

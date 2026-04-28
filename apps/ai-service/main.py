@@ -9,14 +9,15 @@ from app.routers import chat, rag, agents, memory, models, embeddings
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    print(f"AI Service starting up — environment: {settings.environment}")
+    print(f"Nexus AI — AI Service starting up (environment: {settings.environment})")
     yield
     # Shutdown
     print("AI Service shutting down")
 
 
 app = FastAPI(
-    title="AI Operations Copilot — AI Service",
+    title="Nexus AI — AI Service",
+    description="AI microservice powering Nexus AI — LLM routing, RAG, agents, and memory.",
     version="0.1.0",
     lifespan=lifespan,
 )

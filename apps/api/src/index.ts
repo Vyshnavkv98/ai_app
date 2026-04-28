@@ -66,7 +66,7 @@ app.use("/api/admin", adminRouter);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  logger.info(`API server running on port ${PORT}`);
+  logger.info(`Nexus AI — API server running on port ${PORT}`);
 });
 
 export default app;
