@@ -44,7 +44,7 @@ Full-stack AI SaaS platform built as a monorepo (Turborepo) with Next.js 15, Exp
   - Export model pricing constants used by `calculateCost()`
   - _Requirements: 9.3, 11.6_
 
-- [ ] 6. Build Next.js frontend — auth and dashboard shell
+- [x] 6. Build Next.js frontend — auth and dashboard shell
   - Implement `/login` page with Clerk `<SignIn />` component; redirect authenticated users to `/dashboard`
   - Implement `/dashboard` layout with sidebar navigation (Chat, Agents, Integrations, Analytics, Settings, Admin)
   - Implement dashboard overview page fetching active agents count, connected integrations, recent sessions, and current-period token usage from the API
