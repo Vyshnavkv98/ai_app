@@ -51,7 +51,7 @@ Full-stack AI SaaS platform built as a monorepo (Turborepo) with Next.js 15, Exp
   - Add workspace context provider that scopes all API calls to the active workspace; support workspace switching without full page reload
   - _Requirements: 1.1, 1.4, 4.1, 4.2, 4.3, 4.4_
 
-- [ ] 7. Implement basic AI chat — Express.js proxy + FastAPI + SSE streaming
+- [x] 7. Implement basic AI chat — Express.js proxy + FastAPI + SSE streaming
   - In Express.js: implement `POST /api/chat/sessions` and `GET /api/chat/sessions/:id/messages`
   - In Express.js: implement `POST /api/chat/sessions/:id/messages` — persist user message, forward to FastAPI, stream SSE tokens back to client
   - In FastAPI: implement `POST /ai/chat/stream` — call OpenAI with streaming, yield SSE tokens
