@@ -19,8 +19,15 @@ class Settings(BaseSettings):
     # Redis
     redis_url: str = "redis://localhost:6379"
 
-    # API
+    # AWS
+    aws_region: str = "us-east-1"
+    aws_access_key_id: str = ""
+    aws_secret_access_key: str = ""
+    aws_s3_bucket: str = ""
+
+    # Internal API URL (for status callbacks)
     api_url: str = "http://localhost:4000"
+    internal_secret: str = "dev-internal-secret"
 
     class Config:
         env_file = ".env"

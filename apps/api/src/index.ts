@@ -6,6 +6,7 @@ import cors from "cors";
 import { clerkAuth, requireAuth } from "./middleware/auth";
 import { errorHandler } from "./middleware/error";
 import { logger } from "./lib/logger";
+import { startIndexingWorker } from "./lib/queue";
 
 // Route imports
 import authRouter from "./routes/auth";
@@ -18,6 +19,7 @@ import workflowsRouter from "./routes/workflows";
 import analyticsRouter from "./routes/analytics";
 import adminRouter from "./routes/admin";
 import webhooksRouter from "./routes/webhooks";
+import internalRouter from "./routes/internal";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -49,6 +51,9 @@ app.use("/api/auth/webhook", authRouter);
 // External webhooks (Slack, Gmail) — signature-verified per handler
 app.use("/webhooks", webhooksRouter);
 
+// Internal service-to-service routes (AI service → API)
+app.use("/internal", internalRouter);
+
 // ── Protected routes (JWT required) ────────────────────────────────────────
 app.use(requireAuth);
 
@@ -67,6 +72,9 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   logger.info(`Nexus AI — API server running on port ${PORT}`);
+  // Start background workers
+  startIndexingWorker();
+  logger.info("File indexing worker started");
 });
 
 export default app;

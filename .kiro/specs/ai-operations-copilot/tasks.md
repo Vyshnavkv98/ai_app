@@ -67,7 +67,7 @@ Full-stack AI SaaS platform built as a monorepo (Turborepo) with Next.js 15, Exp
 
 ### Week 2 — Core Features (Days 8–14)
 
-- [ ] 9. Implement file upload and S3 + Bull indexing pipeline
+- [x] 9. Implement file upload and S3 + Bull indexing pipeline
   - Implement `POST /api/files/upload` — accept multipart, upload to S3, create File record with `indexStatus: PENDING`, enqueue Bull job
   - Implement `GET /api/files` and `DELETE /api/files/:id` (removes S3 object + vector embeddings)
   - In FastAPI worker: implement `indexFile(fileId, s3Key, workspaceId)` — download from S3, extract text (PDF/DOCX/TXT), chunk with 1000-char size and 200-char overlap, batch-embed via OpenAI `text-embedding-3-small`, upsert to Pinecone scoped by `workspaceId`, update File status to `INDEXED` or `FAILED`

@@ -13,6 +13,7 @@ import {
   Shield,
   Zap,
   ChevronDown,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useWorkspace } from "@/contexts/workspace";
@@ -22,6 +23,7 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/chat", label: "Chat", icon: MessageSquare },
   { href: "/agents", label: "Agents", icon: Bot },
+  { href: "/files", label: "Knowledge Base", icon: FileText },
   { href: "/integrations", label: "Integrations", icon: Plug },
   { href: "/workflows", label: "Workflows", icon: Zap },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
