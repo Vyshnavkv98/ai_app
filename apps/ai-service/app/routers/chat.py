@@ -9,6 +9,7 @@ from openai import AsyncOpenAI, APIError, RateLimitError, APIConnectionError
 from app.config import settings
 from app.services.memory import MemoryService
 from app.services.usage import calculate_cost
+from app.services.rag import retrieve_context
 
 router = APIRouter()
 memory_service = MemoryService()
@@ -102,7 +103,25 @@ async def chat_stream(request: StreamChatRequest):
     if not memory and agent.memory_enabled:
         memory = await memory_service.get(request.session_id)
 
-    messages = _build_messages(request.message, agent.system_prompt or "", memory)
+    # RAG: retrieve relevant chunks and inject into system prompt
+    system_prompt = agent.system_prompt or "You are a helpful AI assistant."
+    if agent.rag_enabled and request.workspace_id:
+        rag_context = await retrieve_context(
+            query=request.message,
+            workspace_id=request.workspace_id,
+            top_k=5,
+        )
+        if rag_context:
+            system_prompt = (
+                f"{system_prompt}\n\n"
+                "Use the following context from the knowledge base to answer the user's question. "
+                "If the context doesn't contain the answer, say so and answer from your general knowledge.\n\n"
+                "--- KNOWLEDGE BASE CONTEXT ---\n"
+                f"{rag_context}\n"
+                "--- END CONTEXT ---"
+            )
+
+    messages = _build_messages(request.message, system_prompt, memory)
     client = _get_client()
 
     async def generate():

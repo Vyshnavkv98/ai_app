@@ -83,13 +83,13 @@ Full-stack AI SaaS platform built as a monorepo (Turborepo) with Next.js 15, Exp
     - Use `hypothesis` with a mocked Pinecone client; assert that calling `indexFile` twice on the same file yields identical `chunkCount` and that the vector upsert is called with the same IDs both times
     - **Validates: Requirements 6.9**
 
-- [ ] 10. Implement RAG chat flow
+- [x] 10. Implement RAG chat flow
   - In FastAPI: implement `POST /ai/rag/query` — generate query embedding, run Pinecone similarity search filtered by `workspaceId` (topK: 5), inject retrieved chunks into system prompt, stream LLM response
   - Update `POST /ai/chat/stream` to branch on `agentConfig.ragEnabled`; call RAG flow when enabled
   - Implement `POST /ai/rag/index` and `DELETE /ai/rag/documents/{id}` endpoints
   - _Requirements: 6.6, 5.6_
 
-- [ ] 11. Implement Agent Builder — CRUD API and React Flow canvas
+- [x] 11. Implement Agent Builder — CRUD API and React Flow canvas
   - In Express.js: implement full agent CRUD (`POST`, `GET`, `PATCH`, `DELETE /api/agents`, `POST /api/agents/:id/invoke`)
   - Validate all agent create/update requests against `CreateAgentSchema`; return 400 on invalid input
   - Enforce that `workspaceId` cannot be changed after creation; write audit log on create/update/delete
