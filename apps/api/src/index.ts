@@ -7,6 +7,7 @@ import { clerkAuth, requireAuth } from "./middleware/auth";
 import { errorHandler } from "./middleware/error";
 import { logger } from "./lib/logger";
 import { startIndexingWorker } from "./lib/queue";
+import { startWorkflowWorker } from "./services/workflow.service";
 
 // Route imports
 import authRouter from "./routes/auth";
@@ -72,9 +73,9 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   logger.info(`Nexus AI — API server running on port ${PORT}`);
-  // Start background workers
   startIndexingWorker();
-  logger.info("File indexing worker started");
+  startWorkflowWorker();
+  logger.info("Background workers started (indexing + workflow)");
 });
 
 export default app;

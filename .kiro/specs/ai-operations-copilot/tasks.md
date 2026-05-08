@@ -96,14 +96,14 @@ Full-stack AI SaaS platform built as a monorepo (Turborepo) with Next.js 15, Exp
   - In Next.js: implement `/agents` list page and `/agents/[agentId]/build` canvas using `@xyflow/react` with nodes for system prompt, model selector, tool picker, memory toggle, RAG toggle
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9_
 
-- [ ] 12. Implement Slack integration
+- [x] 12. Implement Slack integration
   - In Express.js: implement `POST /api/integrations/slack/connect` — generate OAuth URL, store state token in Redis (10-min TTL); implement OAuth callback handler that exchanges code, AES-256-GCM encrypts tokens, persists Integration
   - Implement `POST /webhooks/slack` — verify Slack HMAC signature, acknowledge with 200 immediately, enqueue processing job
   - Implement Slack summarizer workflow step: fetch channel messages via Slack API, invoke AI_Service for summary, post result back to Slack
   - Implement `DELETE /api/integrations/:id` with Admin/Owner role guard
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 21.1, 21.2, 21.3_
 
-- [ ] 13. Implement Gmail integration
+- [x] 13. Implement Gmail integration
   - In Express.js: implement `POST /api/integrations/gmail/connect` — OAuth flow with state token in Redis; callback exchanges code for access + refresh tokens, encrypts with AES-256-GCM, persists Integration
   - Implement `POST /webhooks/gmail` — verify Google Pub/Sub token, fetch full email, forward to AI_Service
   - In FastAPI: classify email intent, generate draft reply with confidence score
@@ -111,7 +111,7 @@ Full-stack AI SaaS platform built as a monorepo (Turborepo) with Next.js 15, Exp
   - Implement refresh token rotation on 401 responses before marking Integration as ERROR
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 21.1, 21.2_
 
-- [ ] 14. Implement workflow automation engine
+- [x] 14. Implement workflow automation engine
   - In Express.js: implement `POST /api/workflows`, `GET /api/workflows`, `PATCH /api/workflows/:id`, `POST /api/workflows/:id/trigger`
   - Implement SCHEDULE trigger using Bull's cron job support; WEBHOOK trigger via unique inbound URL generation
   - On trigger: create WorkflowExecution with `status: RUNNING`, acquire Redis mutex lock (`lock:workflow:{workflowId}`), execute steps asynchronously
