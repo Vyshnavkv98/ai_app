@@ -129,7 +129,7 @@ Full-stack AI SaaS platform built as a monorepo (Turborepo) with Next.js 15, Exp
 
 ### Week 3 — Advanced + Production (Days 15–21)
 
-- [ ] 16. Implement multi-agent system with LangGraph
+- [x] 16. Implement multi-agent system with LangGraph
   - In FastAPI: implement `POST /ai/agents/multi` — build LangGraph `StateGraph` with supervisor node and specialist nodes; add conditional edges from supervisor to specialists and back
   - Implement `createSupervisorNode` and `createSpecialistNode` factory functions
   - Attach Redis checkpointer to compiled graph for state persistence after each node execution
@@ -137,7 +137,7 @@ Full-stack AI SaaS platform built as a monorepo (Turborepo) with Next.js 15, Exp
   - Log a UsageLog entry for every individual agent invocation within the multi-agent workflow
   - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6_
 
-- [ ] 17. Implement memory system — Redis short-term + vector long-term
+- [x] 17. Implement memory system — Redis short-term + vector long-term
   - In FastAPI: implement `GET /ai/memory/{session_id}`, `POST /ai/memory/{session_id}`, `DELETE /ai/memory/{session_id}`
   - Implement `updateMemory(sessionId, newTurn)` — load existing array from Redis, append new turn, slice to last 20 entries, write back with 2-hour TTL
   - Integrate short-term memory into all chat invocations: load before LLM call, update after response
@@ -149,13 +149,13 @@ Full-stack AI SaaS platform built as a monorepo (Turborepo) with Next.js 15, Exp
     - Use `fast-check` (or `hypothesis`): generate arbitrary arrays of message objects of length 0–100; assert that `updateMemory([], messages).length <= 20` for all inputs
     - **Validates: Requirements 14.1, 14.2, 14.6**
 
-- [ ] 18. Implement analytics dashboard
+- [x] 18. Implement analytics dashboard
   - In Express.js: implement `GET /api/analytics/usage` — aggregate UsageLog by date range for the workspace; support `?groupBy=user` query param
   - Implement `GET /api/analytics/agents` — per-agent token and cost aggregation
   - In Next.js: implement `/analytics` page with Recharts/Tremor time-series charts for token usage and cost; display total tokens, total cost, and request count for current billing period
   - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 18.1, 18.2, 18.3_
 
-- [ ] 19. Implement RBAC enforcement, audit logs, and admin panel
+- [x] 19. Implement RBAC enforcement, audit logs, and admin panel
   - Create `requireRole(role)` Express middleware that checks the user's WorkspaceMember role before each handler; return 403 for insufficient roles
   - Enforce role rules: Viewer → no mutations; Member → no integration management or role updates; Admin/Owner → full access; Owner-only → workspace deletion
   - Implement `AuditLogService.write()` called in every mutating service method (create/update/delete on all resources)

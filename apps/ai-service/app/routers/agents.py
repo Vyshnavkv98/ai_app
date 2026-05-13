@@ -6,6 +6,7 @@ from openai import AsyncOpenAI, APIError
 from app.config import settings
 from app.services.usage import calculate_cost
 from app.services.rag import retrieve_context
+from app.services.multi_agent import run_multi_agent
 
 router = APIRouter()
 
@@ -100,7 +101,20 @@ async def invoke_agent(request: InvokeAgentRequest):
     )
 
 
+class MultiAgentRequest(BaseModel):
+    task: str
+    workspace_id: str
+    agent_configs: List[dict] = []
+    timeout_seconds: int = 300
+
+
 @router.post("/agents/multi")
-async def invoke_multi_agent(request: dict):
-    """Multi-agent workflow — implemented in Task 16."""
-    return {"status": "NOT_IMPLEMENTED", "message": "Multi-agent coming in Task 16"}
+async def invoke_multi_agent(request: MultiAgentRequest):
+    """Multi-agent workflow with LangGraph supervisor + specialist pattern."""
+    result = await run_multi_agent(
+        task=request.task,
+        workspace_id=request.workspace_id,
+        agent_configs=request.agent_configs,
+        timeout_seconds=request.timeout_seconds,
+    )
+    return result

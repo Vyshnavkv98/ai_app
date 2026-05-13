@@ -170,6 +170,12 @@ async def chat_stream(request: StreamChatRequest):
                     {"role": "assistant", "content": full_response},
                 ],
             )
+            # Store assistant turn in long-term vector memory
+            await memory_service.store_long_term(
+                request.session_id,
+                request.workspace_id,
+                {"role": "assistant", "content": full_response},
+            )
 
         # Final done event with usage
         total_tokens = prompt_tokens + completion_tokens
